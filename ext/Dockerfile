@@ -34,18 +34,19 @@ RUN useradd --create-home --uid 5000 --shell /bin/bash limsuser && \
 #
 # compass requires: build-essential libfontconfig ruby ruby-dev
 #
+ARG SenchaVersion=4.0.2.67
 RUN echo "Installing Sencha Cmd..." \
     && gem install compass \
     && cd /tmp \
-    && wget http://cdn.sencha.com/cmd/4.0.2.67/SenchaCmd-4.0.2.67-linux-x64.run.zip \
-    && unzip SenchaCmd-4.0.2.67-linux-x64.run.zip \
-    && chmod +x SenchaCmd-4.0.2.67-linux-x64.run \
-    && ./SenchaCmd-4.0.2.67-linux-x64.run --mode unattended --prefix ~limsuser/sencha \
+    && wget http://cdn.sencha.com/cmd/${SenchaVersion}/SenchaCmd-${SenchaVersion}-linux-x64.run.zip \
+    && unzip SenchaCmd-${SenchaVersion}-linux-x64.run.zip \
+    && chmod +x SenchaCmd-${SenchaVersion}-linux-x64.run \
+    && ./SenchaCmd-${SenchaVersion}-linux-x64.run --mode unattended --prefix ~limsuser/sencha \
     && chown -R limsuser:limsuser ~limsuser/sencha \
-    && echo "export PATH=$PATH:~/sencha/Sencha/Cmd/4.0.2.67" >> ~limsuser/.bash_profile \
+    && echo "export PATH=$PATH:~/sencha/Sencha/Cmd/${SenchaVersion}" >> ~limsuser/.bash_profile \
     && rm \
-        SenchaCmd-4.0.2.67-linux-x64.run.zip \
-        SenchaCmd-4.0.2.67-linux-x64.run \
+        SenchaCmd-${SenchaVersion}-linux-x64.run.zip \
+        SenchaCmd-${SenchaVersion}-linux-x64.run \
     && echo "DONE"
 
 
