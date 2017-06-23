@@ -29,25 +29,28 @@ RUN useradd --create-home --uid 5000 --shell /bin/bash limsuser && \
     chown -R limsuser:limsuser /home/limsuser/
 
 #
-# Sencha CMD 4.x
+# Sencha CMD 6.2
 #
 # compass requires: build-essential libfontconfig ruby ruby-dev
 #
-ARG SenchaVersion=4.0.2.67
-RUN echo "Installing Sencha Cmd..." \
-    && gem install compass \
-    && cd /tmp \
-    && wget http://cdn.sencha.com/cmd/${SenchaVersion}/SenchaCmd-${SenchaVersion}-linux-x64.run.zip \
-    && unzip SenchaCmd-${SenchaVersion}-linux-x64.run.zip \
-    && chmod +x SenchaCmd-${SenchaVersion}-linux-x64.run \
-    && ./SenchaCmd-${SenchaVersion}-linux-x64.run --mode unattended --prefix ~limsuser/sencha \
-    && chown -R limsuser:limsuser ~limsuser/sencha \
-    && echo "export PATH=$PATH:~/sencha/Sencha/Cmd/${SenchaVersion}" >> ~limsuser/.bash_profile \
-    && rm \
-        SenchaCmd-${SenchaVersion}-linux-x64.run.zip \
-        SenchaCmd-${SenchaVersion}-linux-x64.run \
-    && echo "DONE"
+ARG SenchaVersion=6.2.2
+RUN echo "Installing Sencha Cmd..." && \
+    gem install compass
 
+USER limsuser
+ENV HOME /home/limsuser
+
+RUN wget -O $HOME/cmd-install.run.zip  http://cdn.sencha.com/cmd/${SenchaVersion}/no-jre/SenchaCmd-${SenchaVersion}-linux-amd64.sh.zip && \
+    unzip -p $HOME/cmd-install.run.zip > $HOME/cmd-install.run && \
+    chmod +x $HOME/cmd-install.run && \
+    INSTALL4J_ADD_VM_PARAMS="-Djava.awt.headless=true" $HOME/cmd-install.run -q && \
+    echo "export PATH=$PATH:/home/limsuser/bin/Sencha/Cmd/" >> $HOME/.bash_profile && \
+    rm \
+        $HOME/cmd-install.run.zip \
+        $HOME/cmd-install.run && \
+    echo "DONE"
+
+USER root
 
 COPY resources/root/docker-entrypoint.sh /root/
 COPY resources/usr/local/bin/dockerlims-shell /usr/local/bin/
