@@ -26,8 +26,7 @@ RUN echo "Installing Packages..." \
 # directories
 RUN useradd --create-home --uid 5000 --shell /bin/bash limsuser && \
     usermod --lock limsuser && \
-    chown -R limsuser:limsuser ~limsuser/
-
+    chown -R limsuser:limsuser /home/limsuser/
 
 #
 # Sencha CMD 4.x
