@@ -40,14 +40,16 @@ RUN echo "Installing Sencha Cmd..." && \
 USER limsuser
 ENV HOME /home/limsuser
 
+COPY resources/cmd-install-responsefile /tmp/cmd-install-responsefile
 RUN wget -O $HOME/cmd-install.run.zip  http://cdn.sencha.com/cmd/${SenchaVersion}/no-jre/SenchaCmd-${SenchaVersion}-linux-amd64.sh.zip && \
     unzip -p $HOME/cmd-install.run.zip > $HOME/cmd-install.run && \
     chmod +x $HOME/cmd-install.run && \
-    INSTALL4J_ADD_VM_PARAMS="-Djava.awt.headless=true" $HOME/cmd-install.run -q && \
+    INSTALL4J_ADD_VM_PARAMS="-Djava.awt.headless=true" $HOME/cmd-install.run -q -varfile /tmp/cmd-install-responsefile && \
     echo "export PATH=$PATH:/home/limsuser/bin/Sencha/Cmd/" >> $HOME/.bash_profile && \
     rm \
         $HOME/cmd-install.run.zip \
         $HOME/cmd-install.run && \
+    chown -R limsuser:limsuser /home/limsuser/bin && \
     echo "DONE"
 
 USER root
@@ -57,5 +59,5 @@ COPY resources/usr/local/bin/dockerlims-shell /usr/local/bin/
 
 WORKDIR /var/www/html/Ext
 
-# NOTE: must use json syntax process is not started in a subshell (and signals are passed correctly)
+# NOTE: must use json syntax to ensure process is not started in a subshell (and signals are passed correctly)
 ENTRYPOINT ["/root/docker-entrypoint.sh"]
